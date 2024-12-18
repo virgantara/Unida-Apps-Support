@@ -1,5 +1,5 @@
 {
-    "name": "virgantara/apps-support-components",
+    "name": "virgantara/unida-apps-support",
     "description": "A collection of UNIDA Gontor Apps Components.",
     "type": "library",
     "keywords": ["yii2", "components"],
@@ -17,7 +17,7 @@
     },
     "autoload": {
         "psr-4": {
-            "virgantara\\components\\": "src/"
+            "unidagontor\\components\\": "src/"
         }
     }
 }
