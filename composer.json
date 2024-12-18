@@ -1,0 +1,22 @@
+{
+    "name": "unidagontor/apps-support-components",
+    "description": "A collection of UNIDA Gontor Apps Components.",
+    "type": "library",
+    "keywords": ["yii2", "components"],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Oddy",
+            "email": "vinux.edu@gmail.com"
+        }
+    ],
+    "require": {
+        "php": ">=7.4",
+        "yiisoft/yii2": "~2.0.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "unidagontor\\components\\": "src/components/"
+        }
+    }
+}
