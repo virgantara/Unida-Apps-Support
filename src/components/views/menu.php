@@ -2,14 +2,14 @@
 use yii\helpers\Html;
 ?>
 
-<ul class="nav navbar-nav">
+<ul class="<?= Html::encode($ulClass) ?>">
     <?php if (!empty($items)): ?>
         <?php foreach ($items as $item): ?>
-            <li>
+            <li class="<?= Html::encode($liClass) ?>">
                 <?= Html::a(Html::encode($item['label']), $item['url']) ?>
             </li>
         <?php endforeach; ?>
     <?php else: ?>
-        <li><a href="#">No allowed applications found</a></li>
+        <li class="<?= Html::encode($liClass) ?>"><a href="#">No allowed applications found</a></li>
     <?php endif; ?>
 </ul>
