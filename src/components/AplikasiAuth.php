@@ -1,5 +1,5 @@
 <?php
-namespace unidagontor\components;
+namespace virgantara\components;
 
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;

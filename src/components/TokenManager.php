@@ -1,6 +1,6 @@
 <?php
 
-namespace unidagontor\components;
+namespace virgantara\components;
 
 use Yii;
 use yii\base\Component;

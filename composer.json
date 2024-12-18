@@ -2,7 +2,7 @@
     "name": "virgantara/unida-apps-support",
     "description": "A collection of UNIDA Gontor Apps Components.",
     "type": "library",
-    "keywords": ["yii2", "components"],
+    "keywords": ["yii2", "components","UNIDA Gontor","Gontor"],
     "license": "MIT",
     "authors": [
         {
@@ -17,7 +17,7 @@
     },
     "autoload": {
         "psr-4": {
-            "virgantara\\components\\": "src/"
+            "virgantara\\components\\": "src/components"
         }
     }
 }
