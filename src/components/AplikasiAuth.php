@@ -14,6 +14,45 @@ class AplikasiAuth extends Component
 {
     public $baseurl;
     
+    /**
+     * Retrieves a list of allowed applications formatted for display.
+     *
+     * @return array The list of allowed applications.
+     */
+    public function getRenderedAllowedAppsList()
+    {
+        $list_apps = [];
+
+        if (!Yii::$app->user->isGuest) {
+            try {
+                $session = Yii::$app->session;
+
+                if ($session->has('access_token') && $session->has('refresh_token')) {
+                    $access_token = $session->get('access_token');
+                    $refresh_token = $session->get('refresh_token');
+
+                    
+                    $hasil = Yii::$app->aplikasi->getAllowedAplikasi($access_token, $refresh_token);
+
+                    if (isset($hasil['apps']) && is_array($hasil['apps'])) {
+                        foreach ($hasil['apps'] as $item) {
+                            $list_apps[] = [
+                                'template' => '<a target="_blank" href="{url}">{label}</a>',
+                                'label' => $item['app_name'],
+                                'url' => $item['app_url'],
+                            ];
+                        }
+                    }
+                }
+            } catch (\Exception $e) {
+                Yii::error('Error fetching allowed applications: ' . $e->getMessage());
+                // Optionally redirect or handle the error as needed
+                // return Yii::$app->response->redirect(Yii::$app->params['sso_login']);
+            }
+        }
+
+        return $list_apps;
+    }
 
     public function getAllowedAplikasi($accessToken, $refreshToken)
     {
