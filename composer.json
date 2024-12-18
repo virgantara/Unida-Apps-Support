@@ -1,5 +1,5 @@
 {
-    "name": "unidagontor/apps-support-components",
+    "name": "virgantara/apps-support-components",
     "description": "A collection of UNIDA Gontor Apps Components.",
     "type": "library",
     "keywords": ["yii2", "components"],
@@ -12,11 +12,12 @@
     ],
     "require": {
         "php": ">=7.4",
-        "yiisoft/yii2": "~2.0.0"
+        "yiisoft/yii2": "~2.0.0",
+        "firebase/php-jwt": "^5.2"
     },
     "autoload": {
         "psr-4": {
-            "unidagontor\\components\\": "src/components/"
+            "virgantara\\components\\": "src/"
         }
     }
 }
