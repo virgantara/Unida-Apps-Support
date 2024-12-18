@@ -9,12 +9,13 @@ use yii\helpers\Url;
 use yii\httpclient\Client;
 use yii\web\UnauthorizedHttpException;
 use Yii;
+
 class AplikasiAuth extends Component
 {
     public $baseurl;
     
 
-    public function getAllowedAplikasi($accessToken)
+    public function getAllowedAplikasi($accessToken, $refreshToken)
     {
         try {
             // $client = new Client();
@@ -29,8 +30,7 @@ class AplikasiAuth extends Component
                     'token' => '',
                     'apps' => []
                 ];
-                // throw new UnauthorizedHttpException('Invalid or expired access token.');
-                // Yii::$app->session->setFlash('danger', Yii::t('app', $response->data['error_description']));
+            
             }
 
             else{
@@ -42,23 +42,22 @@ class AplikasiAuth extends Component
                     $uuid = '';
                     $display_name = '';
 
+                    $params_query = [
+                        'access_token' => $accessToken,
+                        'refresh_token' => $refreshToken
+                    ];
                     foreach($items as $it) {
                         $email = $it['email'];
                         $uuid = $it['uuid'];
                         $display_name = $it['nama_user'];
 
-                        $url = $it['redirect_uri'];
-                        $query = parse_url($url, PHP_URL_QUERY);
 
-                        if ($query) {
-                            $url .= '&token=';
-                        } else {
-                            $url .= '?token=';
-                        }
+                        $full_url = $it['redirect_uri'].'?'.http_build_query($params_query);
+                        
                         $tmp[] = [
                             'app_id' => $it['app_id'],
                             'app_name' => $it['app_name'],
-                            'app_url' => $url
+                            'app_url' => $full_url
                         ];
                     }
 
