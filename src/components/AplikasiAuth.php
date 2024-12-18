@@ -47,7 +47,7 @@ class AplikasiAuth extends Component
                         $uuid = $it['uuid'];
                         $display_name = $it['nama_user'];
 
-                        $url = $it['success_callback'];
+                        $url = $it['redirect_uri'];
                         $query = parse_url($url, PHP_URL_QUERY);
 
                         if ($query) {
