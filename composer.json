@@ -17,7 +17,7 @@
     },
     "autoload": {
         "psr-4": {
-            "unidagontor\\components\\": "src/"
+            "virgantara\\components\\": "src/"
         }
     }
 }
