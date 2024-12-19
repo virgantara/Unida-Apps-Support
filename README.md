@@ -26,7 +26,6 @@ Put this in your params.php or params-local.php
 1. add this to composer.json `"repositories"`
 ```json
     "repositories": [
-        //...
         {
             "type": "vcs",
             "url": "https://github.com/virgantara/Unida-Apps-Support.git"
@@ -36,7 +35,6 @@ Put this in your params.php or params-local.php
 2. add this to composer.json `"require"`
 ```json
     "require": {
-        //...
         "virgantara/unida-apps-support": "dev-master"        
     }
 ```
