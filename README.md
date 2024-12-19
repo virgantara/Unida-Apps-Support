@@ -22,58 +22,85 @@ Put this in your params.php or params-local.php
 ],
 ```
 
-
-### 1. 🛠️ **TokenManager**
-
-A component for securely generating, validating, and managing tokens.
-
-**Features**:
-- Generate secure tokens.
-- Validate tokens with expiration handling.
-- Token encryption and decryption support.
-
-**Example Usage**:
-
-```php
-use unidagontor\components\TokenManager;
-
-$tokenManager = new TokenManager();
-$token = $tokenManager->generateToken(['user_id' => 123]);
-
-if ($tokenManager->validateToken($token)) {
-    echo "Token is valid!";
-}
+### **Installation**
+1. add this to composer.json `"repositories"`
+```json
+    "repositories": [
+        ...
+        {
+            "type": "vcs",
+            "url": "https://github.com/virgantara/Unida-Apps-Support.git"
+        }
+    ]
 ```
-
-### 2. 🔐 **Oauth2Client**
-```php
-use unidagontor\components\Oauth2Client;
-
-$oauthClient = new Oauth2Client([
-    'clientId' => 'your-client-id',
-    'clientSecret' => 'your-client-secret',
-    'redirectUri' => 'https://your-app.com/callback',
-    'provider' => 'google',
-]);
-
-$authUrl = $oauthClient->getAuthorizationUrl();
-echo "Login with Google: <a href='{$authUrl}'>Login</a>";
+2. add this to composer.json `"require"`
+```json
+    "require": {
+        ...
+        "virgantara/unida-apps-support": "dev-master"        
+    }
 ```
-
-### 3. 🔑 **AplikasiAuth**
-```php
-use unidagontor\components\AplikasiAuth;
-
-$auth = new AplikasiAuth();
-if ($auth->login('username', 'password')) {
-    echo "Login successful!";
-} else {
-    echo "Invalid credentials!";
-}
-```
-
-
-### 4. 🚀 **Installation**
+3. Update your composer by running this code
 ```bash
-composer require unidagontor/apps-support-components
+composer update -vvv
+```
+4. Open your `config/web.php`, add the following code in `components`
+```php
+'components' => [
+    ...
+    'tokenService' => [
+        'class' => 'virgantara\components\TokenService',
+    ],
+    'aplikasi' => [
+        'class' => 'virgantara\components\AplikasiAuth',
+        'baseurl' => $params['oauth']['baseurl'], 
+    ],
+    'tokenManager' => [
+        'class' => 'virgantara\components\TokenManager',
+    ],
+    'oauth2' => [
+        'class' => 'virgantara\components\OAuth2Client',
+        'tokenValidationUrl' => $params['oauth']['baseurl'], // Endpoint for token validation
+        'tokenRefreshUrl' => $params['oauth']['baseurl'],
+        'client_id' => $params['oauth']['client_id'],
+        'client_secret' => $params['oauth']['client_secret'],
+    ],
+]
+```
+
+5. Open your SiteController.php, add the following codes:
+```php
+    public function actionAuthCallback()
+    {
+        try {
+            $accessToken = Yii::$app->request->get('access_token');
+            $refreshToken = Yii::$app->request->get('refresh_token');
+
+            Yii::$app->tokenService->handleAuthCallback($accessToken, $refreshToken);
+
+            return $this->redirect(['site/index']);
+        } catch (\Exception $e) {
+            return $this->handleException($e);
+        }
+    }
+
+    protected function handleException($e)
+    {
+        Yii::$app->session->setFlash('danger', $e->getMessage());
+        return $this->redirect(['site/index']);
+    }
+
+    public function actionCallback()
+    {
+        try {
+            $receivedJwt = Yii::$app->request->get('state');
+            $authCode = Yii::$app->request->get('code');
+
+            Yii::$app->tokenService->handleCallback($receivedJwt, $authCode);
+
+            return $this->redirect(['site/index']);
+        } catch (\Exception $e) {
+            return $this->handleException($e);
+        }
+    }
 ```
