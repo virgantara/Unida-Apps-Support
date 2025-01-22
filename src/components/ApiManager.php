@@ -11,10 +11,18 @@ class ApiManager extends Component
 {
 	public $api_baseurl;
 	public $client_token;
+	public $timeout=30;
     
 	public function post($endpoint, $dataPost)
 	{
-		$client = new Client(['baseUrl' => $this->api_baseurl]);
+		$client = new Client([
+			'baseUrl' => $this->api_baseurl,
+			'requestConfig' => [
+                'options' => [
+                    CURLOPT_TIMEOUT => $this->timeout, // Mengatur timeout
+                ],
+            ],
+		]);
 	    $headers = ['x-access-token'=>$this->client_token];
 
 	    $response = $client->post($endpoint, $dataPost, $headers)->send();
@@ -29,8 +37,15 @@ class ApiManager extends Component
 
 	public function get($endpoint, $dataQuery)
 	{
-		$client = new Client(['baseUrl' => $this->api_baseurl]);
-	    $headers = ['x-access-token'=>$this->client_token];
+		$client = new Client([
+			'baseUrl' => $this->api_baseurl,
+			'requestConfig' => [
+                'options' => [
+                    CURLOPT_TIMEOUT => $this->timeout, // Mengatur timeout
+                ],
+            ],
+		]);
+		$headers = ['x-access-token'=>$this->client_token];
 
 	    $response = $client->get($endpoint, $dataQuery, $headers)->send();
                             
