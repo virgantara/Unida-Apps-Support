@@ -1,8 +1,6 @@
 <?php
 namespace virgantara\components;
 
-use Firebase\JWT\JWT;
-use Firebase\JWT\Key;
 use yii\base\Component;
 
 use yii\httpclient\Client;
@@ -87,22 +85,13 @@ class OAuth2Client extends Component
             ])->send();
 
             if (!$response->isOk) {
-                throw new UnauthorizedHttpException('Failed to refresh access token.');
+
+                throw new UnauthorizedHttpException('Failed to refresh access token. '.$response->data['error_description'].' '.$refreshToken);
             }
 
             $data = $response->data;
 
-            $jwtSecretKey = Yii::$app->params['jwt_key'];
-            $decoded = JWT::decode($data, new Key($jwtSecretKey, 'HS256'));
-            if (isset($decoded->accessToken) && isset($decoded->refreshToken)) {
-                
-                return [
-                    'access_token' => $decoded->accessToken,
-                    'refresh_token' => $decoded->refreshToken,
-                    'expires_in' => $decoded->accessTokenExpiresAt,
-                ];
-            }
-
+            
             throw new UnauthorizedHttpException('Invalid response from token refresh endpoint.');
         } catch (\Exception $e) {
             throw new UnauthorizedHttpException('Token refresh failed: ' . $e->getMessage());

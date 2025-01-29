@@ -54,7 +54,7 @@ class TokenService extends Component
         $user = User::findOne(['uuid' => $uuid]);
 
         if (!$user) {
-            throw new \Exception("User with $uuid not found");
+            throw new \Exception("User with ".$uuid." not found",404);
         }
 
         Yii::$app->user->login($user);
