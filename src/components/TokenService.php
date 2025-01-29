@@ -27,16 +27,16 @@ class TokenService extends Component
 
     public function handleCallback($receivedJwt, $authCode)
     {
-        // $secretKey = Yii::$app->params['jwt_key'];
-        // $decoded = JWT::decode($receivedJwt, new Key($secretKey, 'HS256'));
+        $secretKey = Yii::$app->params['jwt_key'];
+        $decoded = JWT::decode($receivedJwt, new Key($secretKey, 'HS256'));
 
-        // if ($decoded->iss !== Yii::$app->params['oauth']['redirectUri']) {
-        //     throw new BadRequestHttpException('Invalid issuer.');
-        // }
+        if ($decoded->iss !== Yii::$app->params['oauth']['redirectUri']) {
+            throw new BadRequestHttpException('Invalid issuer.');
+        }
 
-        // if ($decoded->exp < time()) {
-        //     throw new BadRequestHttpException('Token has expired.');
-        // }
+        if ($decoded->exp < time()) {
+            throw new BadRequestHttpException('Token has expired.');
+        }
 
         $resp = Yii::$app->tokenManager->fetchAccessTokenWithAuthCode($authCode);
         // $decodedToken = JWT::decode($accessToken, new Key($secretKey, 'HS256'));
