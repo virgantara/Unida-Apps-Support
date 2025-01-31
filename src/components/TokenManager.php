@@ -50,7 +50,7 @@ class TokenManager extends Component
 
         if ($httpCode !== 200 || !$response || isset($response['error'])) {
             Yii::error('Token validation failed: ' . ($response['error_description'] ?? 'Unknown error'));
-            return false;
+            return $response;
         }
 
         return $response;
