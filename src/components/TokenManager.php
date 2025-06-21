@@ -9,6 +9,44 @@ use yii\base\InvalidConfigException;
 
 class TokenManager extends Component
 {
+    public function getUserinfo($access_token)
+    {
+        $baseUrl = Yii::$app->params['oauth']['baseurl'] ?? null;
+
+        if (!$baseUrl) {
+            throw new \yii\base\InvalidConfigException('Missing "baseurl" in Yii::$app->params[\'oauth\']');
+        }
+
+        $validateUrl = rtrim($baseUrl, '/') . '/oauth/userinfo';
+
+        $ch = curl_init($validateUrl);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, [
+            'Authorization: Bearer ' . $access_token,
+            'Accept: application/json'
+        ]);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+        $response = curl_exec($ch);
+
+        if (curl_errno($ch)) {
+            Yii::error('cURL Error: ' . curl_error($ch), __METHOD__);
+            curl_close($ch);
+            return false;
+        }
+
+        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        curl_close($ch);
+
+        $responseData = json_decode($response, true);
+
+        if ($httpCode !== 200 || !$responseData || isset($responseData['error'])) {
+            Yii::error('Token validation failed: ' . ($responseData['error_description'] ?? 'Unknown error'), __METHOD__);
+            return false;
+        }
+
+        return $responseData;
+    }
+    
     /**
      * Validates an access token from other applications.
      *
