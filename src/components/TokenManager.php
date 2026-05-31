@@ -110,7 +110,11 @@ class TokenManager extends Component
         $baseUrl = $oauthParams['baseurl'] ?? null;
         $redirectUri = $oauthParams['redirectUri'] ?? null;
 
-        // Exchange the authorization code for an access token
+        if (!$clientId || !$clientSecret || !$baseUrl || !$redirectUri) {
+            Yii::error('Missing OAuth configuration.', __METHOD__);
+            return null;
+        }
+
         $data = http_build_query([
             'grant_type'    => 'authorization_code',
             'code'          => $code,
@@ -126,21 +130,36 @@ class TokenManager extends Component
         curl_setopt($ch, CURLOPT_POST, true);
         curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, [
+            'Content-Type: application/x-www-form-urlencoded',
+            'Accept: application/json',
+        ]);
 
         $response = curl_exec($ch);
 
         if (curl_errno($ch)) {
-            Yii::error('cURL Error: ' . curl_error($ch));
+            Yii::error('cURL Error: ' . curl_error($ch), __METHOD__);
             curl_close($ch);
             return null;
-        } 
+        }
 
+        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
         curl_close($ch);
 
         $accessToken = json_decode($response, true);
 
-        if (isset($accessToken['error'])) {
-            Yii::error('OAuth Error: ' . $accessToken['error_description'] ?? 'Unknown error');
+        if (!is_array($accessToken)) {
+            Yii::error('Invalid OAuth token response: ' . $response, __METHOD__);
+            return null;
+        }
+
+        if ($httpCode !== 200 || isset($accessToken['error'])) {
+            $errorDescription = $accessToken['error_description']
+                ?? $accessToken['error']
+                ?? 'Unknown error';
+
+            Yii::error('OAuth Error: ' . $errorDescription . ' | Response: ' . $response, __METHOD__);
+
             return null;
         }
 
