@@ -158,7 +158,17 @@ class TokenManager extends Component
                 ?? $accessToken['error']
                 ?? 'Unknown error';
 
-            Yii::error('OAuth Error: ' . $errorDescription . ' | Response: ' . $response, __METHOD__);
+            Yii::error([
+                'message' => 'TokenManager: OAuth token exchange failed',
+                'error' => $errorDescription,
+                'httpCode' => $httpCode,
+                'tokenUrl' => $tokenUrl,
+                'client_id' => $clientId,
+                'redirect_uri' => $redirectUri,
+                'code_prefix' => substr($code, 0, 8),
+                'code_length' => strlen($code),
+                'raw_response' => $response,
+            ], __METHOD__);
 
             return null;
         }
