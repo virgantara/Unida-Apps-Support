@@ -145,4 +145,52 @@ class ApiManager extends Component
 
         return $response->data;
     }
+
+    public function put($endpoint, $dataPut = [])
+    {
+        $response = $this->createHttpClient()
+            ->put(
+                $endpoint,
+                $dataPut,
+                $this->getHeaders()
+            )
+            ->send();
+
+        if (!$response->isOk) {
+            Yii::error([
+                'message' => 'API PUT request failed',
+                'endpoint' => $endpoint,
+                'statusCode' => $response->statusCode,
+                'response' => $response->data,
+            ], __METHOD__);
+
+            return [];
+        }
+
+        return $response->data;
+    }
+
+    public function delete($endpoint, $dataDelete = [])
+    {
+        $response = $this->createHttpClient()
+            ->delete(
+                $endpoint,
+                $dataDelete,
+                $this->getHeaders()
+            )
+            ->send();
+
+        if (!$response->isOk) {
+            Yii::error([
+                'message' => 'API DELETE request failed',
+                'endpoint' => $endpoint,
+                'statusCode' => $response->statusCode,
+                'response' => $response->data,
+            ], __METHOD__);
+
+            return [];
+        }
+
+        return $response->data;
+    }
 }
